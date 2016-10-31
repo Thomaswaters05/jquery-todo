@@ -9,20 +9,43 @@
   </head>
   <body>
 
-    <h3>GIT IT DONE- TO DO APP</h3>
+  <div id="myList">
+    <h2>GIT IT DONE- TO DO APP</h2>
+
+<!-- USER INPUT LOCATION FOR TO DO APP / BUTTON -->
+      <div id="wrapper">
+
+         <div id="addButton">
+            <button type="button" id="button" class="btn btn-primary">Add To List</button>
+          </div>
+
+          <div id="inputz">
+            <input type="text" id="userInput" placeholder="Add Items...">
+            </input>
+          </div>
+
+      </div>
+
+<!-- USER INPUT LOCATION FOR TO DO APP / BUTTON -->
+
+<!-- DIV ELEMENT THAT HOLDS THE TO DO LIST ITEMS -->
+<div id="toDoList" class="toDoList">
+  <ul id="myUL">
+    <li>Set Your Goals Below!</li>
+  </ul>
+</div>
+<!-- DIV ELEMENT THAT HOLDS THE TO DO LIST ITEMS  -->
+
+<!-- COMPLETED LIST DIV -->
+  <div id="completedList">
+  Completed Tasks:
+  </div>
+<!-- COMPLETED LIST DIV -->
 
 
-    <div id="input">
-        <label>Enter To Do Item:</label> <input autofocus="true" class=
-        "field__textinput" id="player-name" type="text">
-    </div>
-
-
-
-
-
-
-
+</div>
+        <!-- ***FIREBASE*** -->
+        <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
         <!-- ***JQUERY*** -->
         <script src="/lib/node_modules/jquery/dist/jquery.min.js" type="text/javascript">
         </script>
