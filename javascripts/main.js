@@ -1,96 +1,60 @@
 "use strict";
-
-
-//ADDS X and EDIT Functionality to each list item
-
-$(function () {
-  function addItem () {
-    // append to the list
-    $("#myUL").append('<li> -  <span>' + $("#userInput").val() + '</span> <small><a href="#edit">Edit</a> &bull; <a href="#delete">Delete</a></small></li>');
-    // clear the text
-    $("#userInput").val("");
-  }
-  $("#userInput").keydown(function (e) {
-    // if enter key pressed
-    if (e.which == 13)
-      addItem();
-  });
-  // on clicking the add button
-  $("#button").click(addItem);
-  // delegate the events to dynamically generated elements
-  // for the edit button
-  $(document).on("click", 'a[href="#edit"]', function () {
-    // make the span editable and focus it
-    $(this).closest("li").find("span").prop("contenteditable", true).focus();
-    return false;
-  });
-  // for the delete button
-  $(document).on("click", 'a[href="#delete"]', function () {
-    // remove the list item
-    $(this).closest("li").fadeOut(function () {
-      $(this).remove();
+let apiKeys = {};
+function putTodoInDOM(){
+  FbAPI.getTodos(apiKeys).then(function(items){
+    console.log("itmems from FB", items);
+    $("#completed-tasks").html("");
+    $("#incomplete-tasks").html("");
+    items.forEach(function(item){
+    if (item.isCompleted === true){
+      let newListItem = '<li>';
+      newListItem+='<div class="col-xs-8">';
+      newListItem+='<input class="checkboxStyle" type="checkbox" checked>';
+      newListItem+=`<label class="inputLabel">${item.task}</label>`;
+      newListItem+='<input type="text" class="inputTask">';
+      newListItem+='</div>';
+      newListItem+='</li>';
+    //apend to list
+    $('#completed-tasks').append(newListItem);
+    } else {
+      let newListItem = '<li>';
+      newListItem+='<div class="col-xs-8">';
+      newListItem+='<input class="checkboxStyle" type="checkbox">';
+      newListItem+=`<label class="inputLabel">${item.task}</label>`;
+      newListItem+='<input type="text" class="inputTask">';
+      newListItem+='</div>';
+      newListItem+='<div class="col-xs-4">';
+      newListItem+='<button class="btn btn-default col-xs-6 edit">Edit</button>';
+      newListItem+=`<button class="btn btn-danger col-xs-6 delete" data-fbid="${item.id}">Delete</button>`;
+      newListItem+='</div>';
+      newListItem+='</li>';
+    //apend to list
+    $('#incomplete-tasks').append(newListItem);
+    }
     });
-    return false;
+  });
+}
+$("#add-todo-button").on("click", function(){
+  console.log("test");
+  let newItem = {
+    "task":$("#add-todo-text").val(),
+    "isCompleted": false
+  };
+  FbAPI.addTodo(apiKeys, newItem).then(function(){
+    putTodoInDOM();
   });
 });
-
-
-//Give ability to complete the item (checkbox/cross out)
-let list = document.querySelector('ul');
-list.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    ev.target.classList.toggle('checked');
-  }
-}, false);
-
-
-//Completed items should show up on another list
-
-
-    $(document).on('click', 'span', function() {
-        $(this).toggleClass('strike');
-        $(this).appendTo('#completedList');
-        $(".checked").remove();
-    });
-
- // $(".checked").detach.appendTo("#completedList"); //this is a hint of what to use
-
-
-// Give ability to uncomplete an item
-
-
-
-
-
-
-// NOT USING THI CODE- V1 MISFIT CODE *****************************************************
-
-
-//Add to do list items via the input box (dynamically) once button is cliked
-// $('button').click(function(){
-//     $('#myUL').append($('<li>', {
-//          text: $('#userInput').val()
-//     }));
-// }); //THIS WORKS BUT IS NOT FUNCTIONING CORRECT- GOOD REF THOUGH
-
-
-
-//Adds X next to each list item
-// let userToDoList = $("li");
-// let i;
-// for (i = 0; i < userToDoList.length; i++) {
-//   var span = document.createElement("span");
-//   var txt = document.createTextNode("\u00D7");
-//   span.className = "close";
-//   span.appendChild(txt);
-//   userToDoList[i].appendChild(span);
-// }
-
-
-//Deletes if the X is clicked
-// $('.close').click(function(e){
-//   $(e.target).parent().remove();
-// });
-
-
-// NOT USING THI CODE- V1 MISFIT CODE *****************************************************
+$(document).ready(function(){
+  FbAPI.firebaseCredentials().then(function(keys){
+    console.log("keys", keys);
+    apiKeys = keys;
+      firebase.initializeApp(apiKeys);
+      putTodoInDOM();
+  });
+  $("ul").on("click", ".delete", function(){
+   let itemId = $(this).data("fbid");
+   FbAPI.deleteTodo(apiKeys, itemId).then(function(){
+      putTodoInDOM();
+   });
+  });
+});
